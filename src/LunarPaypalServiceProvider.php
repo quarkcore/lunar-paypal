@@ -2,9 +2,9 @@
 
 namespace Lancodev\LunarPaypal;
 
+use Lancodev\LunarPaypal\Commands\LunarPaypalCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Lancodev\LunarPaypal\Commands\LunarPaypalCommand;
 
 class LunarPaypalServiceProvider extends PackageServiceProvider
 {
