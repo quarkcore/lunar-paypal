@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "lancodev/lunar-paypal",
+    "description": "This is my package lunar-paypal",
     "keywords": [
-        ":vendor_name",
+        "lancodev",
         "laravel",
-        ":package_slug"
+        "lunar-paypal"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/lancodev/lunar-paypal",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Kyle Anderson",
+            "email": "kylekanderson@gmail.com",
             "role": "Developer"
         }
     ],
@@ -35,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories"
+            "Lancodev\\LunarPaypal\\": "src",
+            "Lancodev\\LunarPaypal\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "Lancodev\\LunarPaypal\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -61,10 +61,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "Lancodev\\LunarPaypal\\LunarPaypalServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "LunarPaypal": "Lancodev\\LunarPaypal\\Facades\\LunarPaypal"
             }
         }
     },
