@@ -2,12 +2,40 @@
 
 namespace Lancodev\LunarPaypal;
 
-use Lancodev\LunarPaypal\Commands\LunarPaypalCommand;
+use Illuminate\Support\Facades\Blade;
+use Lancodev\LunarPaypal\Components\PaymentForm;
+use Livewire\Livewire;
+use Lunar\Facades\Payments;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class LunarPaypalServiceProvider extends PackageServiceProvider
 {
+    public function boot()
+    {
+        parent::boot();
+
+        // Register our payment type
+        Payments::extend('paypal', function ($app) {
+            return $app->make(PaypalPaymentType::class);
+        });
+
+        Blade::directive('paypalScripts', function () {
+            $payPal = new PaypalPaymentType();
+            $clientId = $payPal->clientId;
+            $clientToken = $payPal->getClientToken();
+
+            return <<<EOT
+                <script src="https://www.paypal.com/sdk/js?components=buttons,hosted-fields&client-id={$clientId}" data-client-token="{$clientToken}"></script>
+            EOT;
+        });
+
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'lunar-paypal');
+
+        // Register the stripe payment component.
+        Livewire::component('paypal.payment', PaymentForm::class);
+    }
+
     public function configurePackage(Package $package): void
     {
         /*
@@ -17,9 +45,7 @@ class LunarPaypalServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('lunar-paypal')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_lunar-paypal_table')
-            ->hasCommand(LunarPaypalCommand::class);
+            ->hasRoutes(['web'])
+            ->hasConfigFile();
     }
 }
