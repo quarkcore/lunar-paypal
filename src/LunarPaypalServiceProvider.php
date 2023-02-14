@@ -26,7 +26,8 @@ class LunarPaypalServiceProvider extends PackageServiceProvider
             $clientToken = $payPal->getClientToken();
 
             return <<<EOT
-                <script src="https://www.paypal.com/sdk/js?components=buttons,hosted-fields&client-id={$clientId}" data-client-token="{$clientToken}"></script>
+                <script src="https://www.paypal.com/sdk/js?components=buttons,hosted-fields&client-id={$clientId}&disable-funding=credit" data-client-token="{$clientToken}"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/cleave.min.js" integrity="sha512-KaIyHb30iXTXfGyI9cyKFUIRSSuekJt6/vqXtyQKhQP6ozZEGY8nOtRS6fExqE4+RbYHus2yGyYg1BrqxzV6YA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
             EOT;
         });
 
