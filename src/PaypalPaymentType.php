@@ -2,36 +2,21 @@
 
 namespace Lancodev\LunarPaypal;
 
+use Illuminate\Support\Facades\DB;
+use Lancodev\LunarPaypal\Models\Paypal;
 use Lunar\Base\DataTransferObjects\PaymentAuthorize;
 use Lunar\Base\DataTransferObjects\PaymentCapture;
 use Lunar\Base\DataTransferObjects\PaymentRefund;
 use Lunar\Models\Transaction;
 use Lunar\PaymentTypes\AbstractPayment;
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class PaypalPaymentType extends AbstractPayment
 {
-    protected string $accessToken;
-
-    public string $clientId;
-
-    protected $policy;
-
-    public $payPalClient;
+    public Paypal $paypal;
 
     public function __construct()
     {
-        $mode = config('lunar-paypal.mode');
-        $this->clientId = config("lunar-paypal.{$mode}.client_id");
-
-        $this->payPalClient = new PayPalClient();
-        $this->payPalClient->setApiCredentials(config('lunar-paypal'));
-        $this->payPalClient->getAccessToken();
-    }
-
-    public function getClientToken()
-    {
-        return $this->payPalClient->getClientToken()['client_token'];
+        $this->paypal = new Paypal();
     }
 
     /**
@@ -39,7 +24,16 @@ class PaypalPaymentType extends AbstractPayment
      */
     public function authorize(): PaymentAuthorize
     {
-        //
+        if ($this->paypal->authorize($this->order->cart, $this->order) === false) {
+            return new PaymentAuthorize(
+                success: true,
+            );
+        }
+
+        return new PaymentAuthorize(
+            success: false,
+            message: 'Unable to authorize payment',
+        );
     }
 
     /**
@@ -49,7 +43,14 @@ class PaypalPaymentType extends AbstractPayment
      */
     public function capture(Transaction $transaction, $amount = 0): PaymentCapture
     {
-        //
+        if ($this->paypal->capture($transaction) === false) {
+            return new PaymentCapture(
+                success: false,
+                message: 'Unable to capture payment',
+            );
+        }
+
+        return new PaymentCapture(success: true);
     }
 
     /**
@@ -59,6 +60,49 @@ class PaypalPaymentType extends AbstractPayment
      */
     public function refund(Transaction $transaction, int $amount = 0, $notes = null): PaymentRefund
     {
-        //
+        if ($this->paypal->refund($transaction, $amount, $notes) === false) {
+            return new PaymentRefund(
+                success: false,
+                message: 'Unable to refund payment',
+            );
+        }
+
+        return new PaymentRefund(
+            success: true
+        );
+    }
+
+    private function releaseSuccess()
+    {
+        DB::transaction(function () {
+            $this->order->update([
+                'status' => $this->config['released'] ?? 'paid',
+                'placed_at' => now(),
+            ]);
+
+            $transactions = [];
+
+            $type = 'capture';
+
+            if ($this->policy == 'manual') {
+                $type = 'intent';
+            }
+
+            $transactions[] = [
+                'success' => true,
+                'type' => 'charge',
+                'driver' => 'paypal',
+                'amount' => $this->order->total,
+                'reference' => 'paypal',
+                'status' => 'succeeded',
+                'notes' => null,
+                'card_type' => 'visa',
+                'last_four' => '4242',
+                'captured_at' => now(),
+            ];
+            $this->order->transactions()->createMany($transactions);
+        });
+
+        return new PaymentAuthorize(success: true);
     }
 }
