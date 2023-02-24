@@ -15,11 +15,11 @@ class Paypal
     public function __construct()
     {
         $this->client = new PayPalClient();
-        $this->client->setApiCredentials(config('lunar-paypal'));
+        $this->client->setApiCredentials(config('paypal'));
         $this->client->getAccessToken();
 
-        $mode = config('lunar-paypal.mode');
-        $this->clientId = config("lunar-paypal.{$mode}.client_id");
+        $mode = config('paypal.mode');
+        $this->clientId = config("paypal.{$mode}.client_id");
     }
 
     public function getClientToken()
