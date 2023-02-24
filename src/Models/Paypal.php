@@ -24,7 +24,9 @@ class Paypal
 
     public function getClientToken()
     {
-        return $this->client->getClientToken()['client_token'];
+        $clientToken = $this->client->getClientToken();
+
+        return $clientToken['client_token'] ?? null;
     }
 
     public function authorize(Cart $cart, $order = null)
