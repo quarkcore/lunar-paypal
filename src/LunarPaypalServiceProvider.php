@@ -46,7 +46,6 @@ class LunarPaypalServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('lunar-paypal')
-            ->hasRoutes(['web'])
-            ->hasConfigFile();
+            ->hasRoutes(['web']);
     }
 }
