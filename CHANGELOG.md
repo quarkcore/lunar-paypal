@@ -2,6 +2,10 @@
 
 All notable changes to `lunar-paypal` will be documented in this file.
 
+## 0.5 - 2023-03-03
+
+- Added basic webhook functionality
+
 ## 0.4 - 2023-02-24
 
 - Adding null safety to client token response
