@@ -23,7 +23,7 @@ class PaymentForm extends Component
 
     public function refreshCart()
     {
-        $this->cart = CartSession::current()?->calcualte();
+        $this->cart = CartSession::current()?->calculate();
     }
 
     public function render()
