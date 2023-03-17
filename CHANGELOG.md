@@ -2,6 +2,10 @@
 
 All notable changes to `lunar-paypal` will be documented in this file.
 
+## 0.7 - 2023-03-17
+
+- Handle anonymous orders
+
 ## 0.6 - 2023-03-08
 
 - Fix typo in payment form controller
