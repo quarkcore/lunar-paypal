@@ -16,7 +16,7 @@ class OrdersController
 
         $order = $cart->order ?? $cart->createOrder();
 
-        if (! $order->customer()->exists()) {
+        if (! $order->customer()->exists() && $cart->user()->exists()) {
             $customer = $cart->user->customers()->first();
             $newCustomer = $customer->orders()->count() === 0;
 
