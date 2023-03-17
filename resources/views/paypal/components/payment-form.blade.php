@@ -1,6 +1,7 @@
 <div
-    x-data="{ paymentProcessing: false }"
+    x-data="{ paymentProcessing: false, paymentFailed: false }"
     x-on:payment-processing.window="paymentProcessing = true"
+    x-on:payment-failed.window="paymentFailed = true; paymentProcessing = false"
 >
     {{--PayPal Button--}}
     <div id="paypal-button-container" class="paypal-button-container"></div>
@@ -35,6 +36,7 @@
                         <label for="cvv">CVV</label><div id="cvv" class="card_field"></div>
                     </div>
                 </div>
+                <div x-cloak x-show="paymentFailed" id="card-errors" class="mt-4 text-red-600"></div>
             </div>
             <button
                 type="submit"
@@ -195,7 +197,10 @@
                             window.location.href = "{{ $returnUrl }}"
                         })
                     }).catch((err) => {
-                        alert('Payment could not be captured! ' + JSON.stringify(err))
+                        console.log(err.details[0].description)
+                        window.dispatchEvent(new CustomEvent('payment-failed'))
+                        document.querySelector('#card-errors').innerHTML = err.details[0].description
+                        // alert('Payment could not be captured! ' + JSON.stringify(err))
                     })
                 })
             })
