@@ -2,6 +2,7 @@
 
 namespace Lancodev\LunarPaypal\Models;
 
+use Illuminate\Support\Str;
 use Lunar\Models\Cart;
 use Lunar\Models\Transaction;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
@@ -73,6 +74,8 @@ class Paypal
             return false;
         }
 
+        $paymentMethod = $response['payment_source']['card'];
+
         $charge = $response['purchase_units'][0]['payments']['captures'][0];
 
         $transactions = [];
@@ -82,7 +85,8 @@ class Paypal
             'success' => $charge['status'] === 'COMPLETED',
             'type' => 'capture',
             'driver' => 'paypal',
-            'card_type' => 'paypal',
+            'card_type' => Str::lower($paymentMethod['brand']),
+            'last_four' => $paymentMethod['last_digits'],
             'amount' => $charge['amount']['value'] * 100,
             'reference' => $charge['id'],
             'status' => $charge['status'],
